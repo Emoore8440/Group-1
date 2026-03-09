@@ -116,10 +116,17 @@ Program Architecture
 The project is organized using a modular class structure.
 
 Core Classes
+
 Class	       Purpose
+
 StudHub	     Main program entry point and central menu system
+
 StudProfile	 Manages student profiles and profile operations
+
 StudMail	   Handles messaging between profiles and support groups
+
 StudLib	     Manages the resource library and intake quiz access
+
 StudReqs	   Implements the financial aid eligibility quiz
+
 GroupSystem	 Manages student group browsing and joining
