@@ -1,0 +1,193 @@
+package suppStud;
+//This class manages student profiles, allowing users to create, edit, delete, and view profiles through a console menu. 
+//Profiles are stored in an ArrayList as class objects, methods such as createProfile(), editProfile(), and deleteProfile() 
+//handle similarly. The runProfileMenu() method controls the flow of the menu, logging into a profile is required
+// as it ensures user input follows the correct channels. Maintaining program stability.
+
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.lang.IndexOutOfBoundsException;
+
+public class StudProfile {
+
+	private String pfName;
+	private int pfAge;
+	private String email;
+	private ArrayList<String> messages;
+	
+	  public StudProfile(String name, int age, String email) {
+	        this.pfName = name;
+	        this.pfAge = age;
+	        this.email = email;
+	        this.messages = new ArrayList<String>();
+	    }
+
+	    public void editProfile(String name, int age, String email) {
+	        this.pfName = name;
+	        this.pfAge = age;
+	        this.email = email;
+	    }
+	    
+	    public String getPfName() {
+	    	return pfName;
+	    }
+	    
+	    public int getPfAge() {
+	    	return pfAge;
+	    }
+	    
+	    public String getEmail() {
+	    	return email;
+	    }
+	    
+	    public ArrayList<String> getMessages(){
+	    	return messages;
+	    }
+	    
+	    public void addMessage (String message) {
+	    	messages.add(message);
+	    }
+	    
+	    @Override
+	    public String toString() {
+	        return "Name: " + pfName + ", Age: " + pfAge + ", Email: " + email;
+	    }
+	
+	    //Creates a chosen profile
+	    public static void createProfile(ArrayList<StudProfile> profiles, Scanner sc) {
+	        System.out.print("Enter name: ");
+	        String name = sc.nextLine();
+	        System.out.print("Enter age: ");
+	        int age = sc.nextInt();
+	        sc.nextLine();
+	        System.out.print("Enter email: ");
+	        String email = sc.nextLine();
+
+	        profiles.add(new StudProfile(name, age, email));
+	        System.out.println("Profile created.");
+	    }
+
+	    //Edits a chosen profile
+	    public static void editProfile(ArrayList<StudProfile> profiles, int index, Scanner sc) {
+	        if (index < 0 || index >= profiles.size()) {
+	            System.out.println("Invalid profile selection.");
+	            return;
+	        }
+	        StudProfile profile = profiles.get(index);
+	        System.out.print("Edit name (current: " + profile.getPfName() + "): ");
+	        String pfName = sc.nextLine();
+	        System.out.print("Edit age: (current: " + profile.getPfAge() + "): ");
+	        int pfAge = sc.nextInt();
+	        sc.nextLine();
+	        System.out.print("Edit email: (current: " + profile.getEmail() + "): ");
+	        String email = sc.nextLine();
+
+	        profile.editProfile(pfName, pfAge, email);
+	        System.out.println("Profile updated.");
+	    }
+	    
+	    //Deletes a chosen profile
+	    public static void deleteProfile(ArrayList<StudProfile> profiles, int index) {
+	        if (index < 0 || index >= profiles.size()) {
+	            System.out.println("Invalid profile selection.");
+	            return;
+	        }
+	        profiles.remove(index);
+	        System.out.println("Profile deleted.");
+	    }
+	    
+	    //Runs profile menu. Of return type StudProfile to pass active profile to StudMail and other classes
+	    public static StudProfile runProfileMenu(ArrayList<StudProfile> profiles, Scanner sc) {
+	        int selectedProfileIndex = -1;
+	        boolean runna = true;
+	        while (runna) { //Stuck in menu
+	            System.out.println("\nProfile Management Menu:");
+	            System.out.println("1. Create Profile");
+	            System.out.println("2. Edit Profile");
+	            System.out.println("3. Delete Profile");
+	            System.out.println("4. Select Profile");
+	            System.out.println("5. View Selected Profile");
+	            System.out.println("6. Back to Main Menu");
+
+	            System.out.print("Select an option: ");
+	            try {
+	            int choice = sc.nextInt();
+	            sc.nextLine();  
+
+	            switch (choice) {
+	                case 1:
+	                    createProfile(profiles, sc);
+	                    break;
+	                case 2:
+	                	 if (selectedProfileIndex == -1) {
+	                         System.out.println("No profile selected to edit.");
+	                     } else {
+	                         editProfile(profiles, selectedProfileIndex, sc);
+	                     }
+	                	 break;
+	                case 3:
+	                	if (selectedProfileIndex == -1) {
+	                        System.out.println("No profile selected to delete.");
+	                    } else {
+	                        deleteProfile(profiles, selectedProfileIndex);
+	                        selectedProfileIndex = -1; // Clear selected index after deletion
+	                    }
+	                    break;
+	                case 4:
+	                    selectedProfileIndex = selectProfile(profiles, sc);
+	                    break;
+	                case 5:
+	                	if (selectedProfileIndex == -1) {
+	                        System.out.println("No profile selected to view.");
+	                    } else {
+	                        viewProfile(profiles, selectedProfileIndex);
+	                    }
+	                    break;
+	                case 6:
+	                    runna = false;
+	                    break; // Exit menu
+	                default:
+	                    System.out.println("Invalid. Please try again.");
+	            }
+	            }
+	            catch(InputMismatchException e) {
+	            	System.out.println("Invalid. Try again.");
+	                sc.nextLine(); 
+	            }
+	            catch(IndexOutOfBoundsException e) {
+	            	System.out.println("Invalid profile selection.");
+	            }
+	            catch(Exception e) {
+	            	System.out.println("Unexpected error.");
+	            }
+	            }
+	        //Return used as a bandaid for a certain bug where exiting profile menu with no active profile crashes program
+	        return (selectedProfileIndex != -1) ? profiles.get(selectedProfileIndex) : null; 
+	       }
+
+	    //Logs into desired profile
+	    public static int selectProfile(ArrayList<StudProfile> profiles, Scanner sc) {
+	        System.out.println("Select a profile (0 to " + (profiles.size() - 1) + "): ");
+	        for (int i = 0; i < profiles.size(); i++) {
+	            System.out.println(i + ". " + profiles.get(i));
+	        }
+	        int selectedIndex = sc.nextInt();
+	        sc.nextLine();
+	        if (selectedIndex < 0 || selectedIndex >= profiles.size()) {
+	            System.out.println("Invalid selection.");
+	            return -1; // Clear selected index
+	        }
+	        return selectedIndex;
+	    }
+
+	    //Displays active profile
+	    public static void viewProfile(ArrayList<StudProfile> profiles, int selectedIndex) {
+	        if (selectedIndex == -1) {
+	            System.out.println("No profile selected.");
+	        } else {
+	            System.out.println("Selected Profile: " + profiles.get(selectedIndex));
+	        }
+	    }
+	    
+}

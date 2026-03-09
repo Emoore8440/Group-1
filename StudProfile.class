@@ -1,0 +1,194 @@
+//This class runs a menu that allows a user to input a number corresponding to either viewing or joining clubs or returning to
+//the main menu. The help groups and their information are stored in an ArrayList which are called by methods such as viewGroups()
+//and joinGroup(). The main method is called runGroupSystem() which uses a boolean to determine if it's running or not and
+//calls on the other methods or closes to return to the main menu based off of the users input. 
+
+package suppStud;
+
+	
+	import java.util.ArrayList;
+	import java.util.InputMismatchException;
+	import java.util.Scanner;
+
+	public class GroupSystem {
+
+	    // Group class to store information about each club
+	    static class Group {
+	        String name;
+	        String description;
+	        String manager;
+	        String contact;
+
+	        //parameterized constructor for a new group
+	        public Group(String name, String description, String manager, String contact) {
+	            this.name = name;
+	            this.description = description;
+	            this.manager = manager;
+	            this.contact = contact;
+	        }
+
+	        //method to display the info of a group
+	        public void displayInfo() {
+	            System.out.println("\n--- Group Information ---");
+	            System.out.println("Group Name: " + name);
+	            System.out.println("Description: " + description);
+	            System.out.println("Manager: " + manager);
+	            System.out.println("Contact: " + contact);
+	        }
+	    }
+
+	    //main method that will run the group system and corresponding menus to allow the user to input into the console
+	    public static void runGroupSystem() {
+
+	        Scanner scanner = new Scanner(System.in);
+
+	        //arrayList to store created groups
+	        ArrayList<Group> groups = new ArrayList<>();
+
+	        
+	        groups.add(new Group(
+	                "STEM Mentorship Club",
+	                "A mentorship network connecting students with STEM professionals.",
+	                "Dr. Lisa Chen",
+	                "stemclub@school.edu"));
+
+	        groups.add(new Group(
+	                "Women in Tech",
+	                "A community supporting women pursuing careers in technology.",
+	                "Maria Rodriguez",
+	                "womenintech@school.edu"));
+
+	        groups.add(new Group(
+	                "LGBTQ+ Support",
+	                "A safe space providing resources and peer support.",
+	                "Jordan Taylor",
+	                "lgbtqsupport@school.edu"));
+
+	        //while the method is running print the menu to the console for the user to use
+	        boolean running = true;
+
+	        while (running) {
+
+	            System.out.println("\n=================================");
+	            System.out.println("        Student Group System     ");
+	            System.out.println("=================================");
+	            System.out.println("1. View Available Groups");
+	            System.out.println("2. Join a Group");
+	            System.out.println("3. Return to Main Menu");
+	            System.out.println("Enter your choice:");
+
+	            //try catch block with a switch case that allows user to input corresponding number to the menu and catch 
+	            //InputMismatchException as well as a way to exit the groupSystem and return to main menu
+	            try {
+
+	                int choice = scanner.nextInt();
+
+	                switch (choice) {
+
+	                    case 1:
+	                        viewGroups(groups, scanner);
+	                        break;
+
+	                    case 2:
+	                        joinGroup(groups, scanner);
+	                        break;
+
+	                    case 3:
+	                        System.out.println("Returning to main menu...");
+	                        running = false;
+	                        break;
+
+	                    default:
+	                        System.out.println("Invalid choice. Please try again.");
+	                }
+
+	            } catch (InputMismatchException e) {
+	            	//catch invalid input and clear line for new input
+	                System.out.println("Invalid input. Please enter a number.");
+	                scanner.nextLine();
+	            }
+	        }
+	    }
+
+	    //method to allow user to view all groups added into the group ArrayList
+	    public static void viewGroups(ArrayList<Group> groups, Scanner scanner) {
+
+	        System.out.println("\n--- Available Groups ---");
+
+	        //print each groups name
+	        for (int i = 0; i < groups.size(); i++) {
+	            System.out.println((i + 1) + ". " + groups.get(i).name);
+	        }
+
+	        System.out.println("0. Return to previous menu");
+	        System.out.println("Select a group to view details:");
+
+	        //try catch block for inputMismatchException
+	        try {
+
+	            int choice = scanner.nextInt();
+
+	            if (choice == 0) {
+	                return;
+	            }
+
+	            //displayInfo of chosen group from the ArrayList
+	            if (choice > 0 && choice <= groups.size()) {
+	                groups.get(choice - 1).displayInfo();
+	            } else {
+	                System.out.println("Invalid selection.");
+	            }
+
+	            //catch InputMismatchException and clear line for new input
+	        } catch (InputMismatchException e) {
+	            System.out.println("Please enter a valid number.");
+	            scanner.nextLine();
+	        }
+	    }
+
+	    //method for the user to join a group
+	    public static void joinGroup(ArrayList<Group> groups, Scanner scanner) {
+
+	        System.out.println("\n--- Join a Group ---");
+
+	        //print group names
+	        for (int i = 0; i < groups.size(); i++) {
+	            System.out.println((i + 1) + ". " + groups.get(i).name);
+	        }
+
+	        System.out.println("0. Cancel");
+	        System.out.println("Enter the number of the group you want to join:");
+
+	        //get user input to join a group and catch inputMismatchExceptions
+	        try {
+
+	            int choice = scanner.nextInt();
+
+	            if (choice == 0) {
+	                System.out.println("Returning to menu.");
+	                return;
+	            }
+
+	            if (choice > 0 && choice <= groups.size()) {
+
+	                Group selected = groups.get(choice - 1);
+
+	                System.out.println("\nYou have joined: " + selected.name + "!");
+	                System.out.println("A message has been sent to the group manager.");
+	                System.out.println("Contact: " + selected.contact);
+
+	            } else {
+	                System.out.println("Invalid selection.");
+	            }
+
+	        } catch (InputMismatchException e) {
+	            System.out.println("Invalid input. Please enter a number.");
+	            scanner.nextLine();
+	        }
+	    }
+	    
+	    
+	}
+
+
+	         
